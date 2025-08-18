@@ -1,0 +1,101 @@
+--究極宝玉陣
+--Ultimate Crystal Magic
+local s,id=GetID()
+function s.initial_effect(c)
+	--activate
+	local e1=Effect.CreateEffect(c)
+	e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_FUSION_SUMMON)
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetCode(EVENT_BATTLE_DESTROYED)
+	e1:SetCondition(s.condition)
+	e1:SetCost(s.cost)
+	e1:SetTarget(s.target)
+	e1:SetOperation(s.activate)
+	c:RegisterEffect(e1)
+	--place
+	local e2=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e2:SetCode(EVENT_LEAVE_FIELD)
+	e2:SetRange(LOCATION_GRAVE)
+	e2:SetCondition(s.plcon)
+	e2:SetCost(Cost.SelfBanish)
+	e2:SetTarget(s.pltg)
+	e2:SetOperation(s.plop)
+	c:RegisterEffect(e2)
+end
+s.listed_series={SET_CRYSTAL_BEAST,SET_ULTIMATE_CRYSTAL}
+function s.confilter(c,tp)
+	return c:IsPreviousSetCard(SET_CRYSTAL_BEAST) and c:IsPreviousControler(tp)
+end
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.confilter,1,nil,tp)
+end
+function s.cfilter(c)
+	return c:IsSetCard(SET_CRYSTAL_BEAST) and (c:IsFaceup() or not c:IsOnField()) and c:IsAbleToGraveAsCost()
+end
+function s.exfilter(c,tp)
+	return Duel.GetLocationCountFromEx(tp,tp,Group.FromCards(c))>0
+end
+function s.rescon(sg,e,tp,mg)
+	local countmatch=#sg==sg:GetClassCount(Card.GetCode)
+	return countmatch and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_EXTRA,0,1,nil,e,tp,sg),not countmatch
+end
+function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	e:SetLabel(1)
+	local g=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_ONFIELD|LOCATION_HAND|LOCATION_DECK,0,nil)
+	if chk==0 then return g:GetClassCount(Card.GetCode)>=7
+		and aux.SelectUnselectGroup(g,e,tp,7,7,s.rescon,0) end
+	local rg=aux.SelectUnselectGroup(g,e,tp,7,7,s.rescon,1,tp,HINTMSG_TOGRAVE)
+	Duel.SendtoGrave(rg,REASON_COST)
+end
+function s.filter(c,e,tp,sg)
+	return c:IsType(TYPE_FUSION) and c:IsSetCard(SET_ULTIMATE_CRYSTAL) and Duel.GetLocationCountFromEx(tp,tp,sg,c)>0 and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_FUSION,tp,false,false) and c:CheckFusionMaterial()
+end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return true end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
+end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp)
+	if #g>0 then
+		Duel.SpecialSummon(g,SUMMON_TYPE_FUSION,tp,tp,false,false,POS_FACEUP)
+		g:GetFirst():CompleteProcedure()
+	end
+end
+function s.plcfilter(c,tp)
+	return c:IsPreviousSetCard(SET_ULTIMATE_CRYSTAL) and c:IsPreviousControler(tp) and c:IsPreviousPosition(POS_FACEUP) and c:GetReasonPlayer()~=tp
+		and c:IsReason(REASON_EFFECT) and c:IsPreviousLocation(LOCATION_MZONE) and c:IsControler(tp)
+end
+function s.plcon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.plcfilter,1,nil,tp)
+end
+function s.plfilter(c)
+	return c:IsSetCard(SET_CRYSTAL_BEAST) and c:IsMonster() and not c:IsForbidden()
+end
+function s.pltg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0
+		and Duel.IsExistingMatchingCard(s.plfilter,tp,LOCATION_GRAVE,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_LEAVE_GRAVE,nil,1,tp,LOCATION_GRAVE)
+end
+function s.plop(e,tp,eg,ep,ev,re,r,rp)
+	local ft=Duel.GetLocationCount(tp,LOCATION_SZONE)
+	if ft<=0 then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOFIELD)
+	local g=Duel.SelectMatchingCard(tp,s.plfilter,tp,LOCATION_GRAVE,0,1,ft,nil)
+	if #g>0 then
+		local tc=g:GetFirst()
+		for tc in aux.Next(g) do
+			Duel.MoveToField(tc,tp,tp,LOCATION_SZONE,POS_FACEUP,true)
+			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetCode(EFFECT_CHANGE_TYPE)
+			e1:SetType(EFFECT_TYPE_SINGLE)
+			e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+			e1:SetReset(RESET_EVENT|RESETS_STANDARD&~RESET_TURN_SET)
+			e1:SetValue(TYPE_SPELL+TYPE_CONTINUOUS)
+			tc:RegisterEffect(e1)
+		end
+		Duel.RaiseEvent(g,EVENT_CUSTOM+CARD_CRYSTAL_TREE,e,0,tp,0,0)
+	end
+end
