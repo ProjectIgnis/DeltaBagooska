@@ -287,13 +287,15 @@ function Witchcrafter.CreateCostReplaceEffect(c)
 	e:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e:SetCode(EFFECT_COST_REPLACE)
 	e:SetTargetRange(1,0)
-	e:SetValue(function(base,extracon,e,tp)
-		local c=e:GetHandler()
-		local trig_eff=Duel.GetChainInfo(0,CHAININFO_TRIGGERING_EFFECT)
-		if not trig_eff or c:IsRelateToEffect(e) then
+	e:SetValue(function(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
+		if chk==0 then
+			local c=e:GetHandler()
 			return c:IsSetCard(SET_WITCHCRAFTER) and c:IsControler(tp) and c:IsLocation(LOCATION_MZONE)
-		else
-			return c:IsPreviousSetCard(SET_WITCHCRAFTER) and c:IsPreviousControler(tp) and c:IsPreviousLocation(LOCATION_MZONE)
+		end
+		local ctrl,loc,setcodes=Duel.GetChainInfo(0,CHAININFO_TRIGGERING_CONTROLER,CHAININFO_TRIGGERING_LOCATION,CHAININFO_TRIGGERING_SETCODES)
+		if ctrl==1-tp or loc~=LOCATION_MZONE then return false end
+		for _,setcode in ipairs(setcodes) do
+			if (SET_WITCHCRAFTER&0xfff)==(setcode&0xfff) and (SET_WITCHCRAFTER&setcode)==SET_WITCHCRAFTER then return true end
 		end
 	end)
 	return e
