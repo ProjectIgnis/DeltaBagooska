@@ -1,6 +1,20 @@
 --Utilities to be added to the core
 
 --[[
+	also consider the minimum and maximum Tribute requirements set by the Normal Summon procedures
+--]]
+Card.GetTributeRequirement=(function()
+	local oldfunc=Card.GetTributeRequirement
+	return function(c,...)
+		if c.min_tribute_req and c.max_tribute_req then
+			return c.min_tribute_req,c.max_tribute_req
+		else
+			return oldfunc(c,...)
+		end
+	end
+end)()
+
+--[[
 	update 'Card.IsRelateToEffect' to use 'Card.IsRelateToChain' instead if an activated effect is currently resolving
 	fixes the effect relation issues with cards such as "Dramaturge of Despia", "Sacred Fire King Garunix", etc
 --]]
