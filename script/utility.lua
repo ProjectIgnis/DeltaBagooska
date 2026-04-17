@@ -1809,7 +1809,9 @@ function Cost.Replaceable(base,extracon)
 		if not eff then return base(e,tp,eg,ep,ev,re,r,rp,1) end
 
 		Duel.Hint(HINT_CARD,0,eff:GetHandler():GetOriginalCode())
-		local res={eff:GetOperation()(eff,e,tp,eg,ep,ev,re,r,rp,chk)}
+		local operation=eff:GetOperation()
+		if not operation then return eff:UseCountLimit(tp) end
+		local res={operation(eff,e,tp,eg,ep,ev,re,r,rp,chk)}
 		eff:UseCountLimit(tp)
 		return table.unpack(res)
 	end
