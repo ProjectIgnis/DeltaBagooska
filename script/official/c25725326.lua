@@ -25,7 +25,7 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id)
 	e1:SetCondition(function(e) return e:GetHandler():IsAbleToRemoveAsCost() end)
 	e1:SetValue(s.repval)
-	e1:SetOperation(s.repop)
+	e1:SetOperation(function(base) Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST|REASON_REPLACE) end)
 	c:RegisterEffect(e1)
 end
 s.listed_series={SET_PRANK_KIDS}
@@ -48,7 +48,4 @@ function s.repval(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	return Duel.IsTurnPlayer(1-tp) and c:IsSetCard(SET_PRANK_KIDS) and c:IsLocation(LOCATION_MZONE) and c:IsControler(tp)
 		and extracon(base,e,tp,eg,ep,ev,re,r,rp)
-end
-function s.repop(base,e,tp,eg,ep,ev,re,r,rp)
-	Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST|REASON_REPLACE)
 end

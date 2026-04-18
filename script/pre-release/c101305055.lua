@@ -23,7 +23,7 @@ function s.initial_effect(c)
 	e2:SetCountLimit(1,{id,1})
 	e2:SetCondition(function(e) return e:GetHandler():IsAbleToRemoveAsCost() end)
 	e2:SetValue(s.repval)
-	e2:SetOperation(s.repop)
+	e2:SetOperation(function(base) Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST) end)
 	c:RegisterEffect(e2)
 end
 s.listed_names={53589300,68231287,5914858} --"Nerva the Power Patron of Creation", "Jupiter the Power Patron of Destruction", "Junora the Power Patron of Tuning"
@@ -69,7 +69,4 @@ end
 function s.repval(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	return c:IsSetCard(SET_POWER_PATRON) and c:IsFaceup() and c:IsControler(tp) and c:IsLocation(LOCATION_MZONE)
-end
-function s.repop(base,e,tp,eg,ep,ev,re,r,rp)
-	Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST)
 end

@@ -58,7 +58,7 @@ function s.repval(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
 	return c:IsSetCard(SET_URSARCTIC) and c:IsMonster()
 		and Duel.IsExistingMatchingCard(s.repconfilter,e:GetHandlerPlayer(),LOCATION_GRAVE,0,1,nil,extracon,base,e,tp,eg,ep,ev,re,r,rp)
 end
-function s.repop(base,e,tp,eg,ep,ev,re,r,rp,chk)
+function s.repop(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	local g=Duel.SelectMatchingCard(tp,s.repconfilter,tp,LOCATION_GRAVE,0,1,1,nil,extracon,base,e,tp,eg,ep,ev,re,r,rp)
 	Duel.Remove(g,POS_FACEUP,REASON_COST|REASON_REPLACE)

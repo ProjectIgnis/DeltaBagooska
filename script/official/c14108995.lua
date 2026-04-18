@@ -38,7 +38,7 @@ end
 function s.hintselectionfilter(c)
 	return c:IsCode(id) and not c:HasFlagEffect(id)
 end
-function s.repop(base,e,tp,eg,ep,ev,re,r,rp)
+function s.repop(base,extracon,e,tp,eg,ep,ev,re,r,rp)
 	local c=base:GetHandler()
 	if Duel.IsExistingMatchingCard(s.hintselectionfilter,tp,LOCATION_SZONE,0,1,c) then
 		Duel.HintSelection(c)

@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	e3:SetCountLimit(1,{id,1})
 	e3:SetCondition(function(e) return Duel.IsPlayerCanDiscardDeckAsCost(e:GetHandlerPlayer(),2) end)
 	e3:SetValue(s.repval)
-	e3:SetOperation(s.repop)
+	e3:SetOperation(function(base,extracon,e,tp) Duel.DiscardDeck(tp,2,REASON_COST) end)
 	c:RegisterEffect(e3)
 	--Special Summon 1 "Naturia" monster from your GY
 	local e4=Effect.CreateEffect(c)
@@ -65,9 +65,6 @@ end
 function s.repval(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	return c:IsSetCard(SET_NATURIA) and c:IsMonster() and extracon(base,e,tp,eg,ep,ev,re,r,rp)
-end
-function s.repop(base,e,tp,eg,ep,ev,re,r,rp)
-	Duel.DiscardDeck(tp,2,REASON_COST)
 end
 function s.spfilter(c,e,tp)
 	return c:IsSetCard(SET_NATURIA) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)

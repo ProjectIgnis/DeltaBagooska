@@ -23,7 +23,7 @@ function s.initial_effect(c)
 	e2:SetTargetRange(1,0)
 	e2:SetCondition(function(e) return e:GetHandler():IsAbleToRemoveAsCost() end)
 	e2:SetValue(s.repval)
-	e2:SetOperation(s.repop)
+	e2:SetOperation(function(base) Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST|REASON_REPLACE) end)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_STARDUST}
@@ -65,7 +65,4 @@ function s.repval(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	return c:IsSetCard(SET_STARDUST) and c:IsType(TYPE_SYNCHRO) and c:IsControler(tp) and c:IsLocation(LOCATION_MZONE)
 		and c:IsFaceup() and extracon(base,e,tp,eg,ep,ev,re,r,rp)
-end
-function s.repop(base,e,tp,eg,ep,ev,re,r,rp)
-	Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST|REASON_REPLACE)
 end

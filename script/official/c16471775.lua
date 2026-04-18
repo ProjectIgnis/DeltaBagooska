@@ -25,7 +25,7 @@ function s.initial_effect(c)
 	e2:SetCountLimit(1,{id,1})
 	e2:SetCondition(aux.AND(aux.exccon,function(e) return e:GetHandler():IsAbleToRemoveAsCost() end))
 	e2:SetValue(s.repval)
-	e2:SetOperation(s.repop)
+	e2:SetOperation(function(base) Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST|REASON_REPLACE) end)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_URSARCTIC}
@@ -47,7 +47,4 @@ end
 function s.repval(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	return c:IsSetCard(SET_URSARCTIC) and c:IsMonster() and extracon(base,e,tp,eg,ep,ev,re,r,rp)
-end
-function s.repop(base,e,tp,eg,ep,ev,re,r,rp)
-	Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST|REASON_REPLACE)
 end

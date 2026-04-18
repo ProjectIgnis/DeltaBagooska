@@ -1811,7 +1811,7 @@ function Cost.Replaceable(base,extracon)
 		Duel.Hint(HINT_CARD,0,eff:GetHandler():GetOriginalCode())
 		local operation=eff:GetOperation()
 		if not operation then return eff:UseCountLimit(tp) end
-		local res={operation(eff,e,tp,eg,ep,ev,re,r,rp,chk)}
+		local res={operation(eff,extracon,e,tp,eg,ep,ev,re,r,rp,chk)}
 		eff:UseCountLimit(tp)
 		return table.unpack(res)
 	end

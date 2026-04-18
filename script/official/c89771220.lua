@@ -23,7 +23,7 @@ function s.initial_effect(c)
 	e2:SetCountLimit(1,id)
 	e2:SetCondition(function(e) return e:GetHandler():IsAbleToRemoveAsCost() end)
 	e2:SetValue(s.repval)
-	e2:SetOperation(s.repop)
+	e2:SetOperation(function(base) Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST|REASON_REPLACE) end)
 	c:RegisterEffect(e2)
 end
 s.listed_names={33250142,CARD_URSARCTIC_BIG_DIPPER,58793369,27693363,97148796}
@@ -71,7 +71,4 @@ end
 function s.repval(base,extracon,e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
 	return c:IsSetCard({SET_URSARCTIC,SET_DRYTRON}) and c:IsMonster() and extracon(base,e,tp,eg,ep,ev,re,r,rp)
-end
-function s.repop(base,e,tp,eg,ep,ev,re,r,rp)
-	Duel.Remove(base:GetHandler(),POS_FACEUP,REASON_COST|REASON_REPLACE)
 end
