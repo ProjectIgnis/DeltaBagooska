@@ -1,4 +1,4 @@
---CNo.104 仮面魔踏士アンブラル
+--ＣＮｏ．１０４ 仮面魔踏士アンブラル
 --Number C104: Umbral Horror Masquerade
 local s,id=GetID()
 function s.initial_effect(c)
@@ -38,7 +38,7 @@ function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chk==0 then return Duel.IsExistingTarget(Card.IsSpellTrap,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local g=Duel.SelectTarget(tp,Card.IsSpellTrap,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,tp,0)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
@@ -48,21 +48,24 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.negcon(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	local loc=Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_LOCATION)
-	return not c:IsStatus(STATUS_BATTLE_DESTROYED) and ep==1-tp
-		and loc==LOCATION_MZONE and re:IsMonsterEffect() and Duel.IsChainNegatable(ev)
-		and c:GetOverlayGroup():IsExists(Card.IsCode,1,nil,2061963)
+	return c:GetOverlayGroup():IsExists(Card.IsCode,1,nil,2061963) and ep==1-tp and re:IsMonsterEffect()
+		and Duel.GetChainInfo(ev,CHAININFO_TRIGGERING_LOCATION)==LOCATION_MZONE
+		and not c:IsStatus(STATUS_BATTLE_DESTROYED) and Duel.IsChainNegatable(ev)
 end
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
-	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_NEGATE,eg,1,tp,0)
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOGRAVE,nil,1,1-tp,LOCATION_HAND)
 end
 function s.negop(e,tp,eg,ep,ev,re,r,rp)
 	if not Duel.NegateActivation(ev) then return end
-	local g=Duel.GetFieldGroup(1-tp,LOCATION_HAND,0)
+	local opp=1-tp
+	local g=Duel.GetFieldGroup(opp,LOCATION_HAND,0)
 	if #g==0 or not Duel.SelectYesNo(tp,aux.Stringid(id,2)) then return end
-	local sc=g:RandomSelect(1-tp,1):GetFirst()
-	if sc and Duel.SendtoGrave(sc,REASON_EFFECT)>0 and sc:IsLocation(LOCATION_GRAVE) then
-		Duel.SetLP(1-tp,Duel.GetLP(1-tp)/2)
+	local sc=g:RandomSelect(opp,1):GetFirst()
+	if not sc then return end
+	Duel.BreakEffect()
+	if Duel.SendtoGrave(sc,REASON_EFFECT)>0 and sc:IsLocation(LOCATION_GRAVE) then
+		Duel.SetLP(opp,Duel.GetLP(opp)/2)
 	end
 end
