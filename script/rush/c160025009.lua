@@ -33,7 +33,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetDecktopGroup(1-tp,1):GetFirst()
 	if tc:IsMonster() then
 		Duel.DiscardDeck(tp,3,REASON_EFFECT)
-		if Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_GRAVE,0,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
+		if c:IsMaximumMode() and Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_GRAVE,0,1,nil) and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
 			local g=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_GRAVE,0,1,2,nil)
 			Duel.HintSelection(g)
