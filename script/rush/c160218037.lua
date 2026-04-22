@@ -51,7 +51,7 @@ function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 	c:RegisterEffect(e1)
 end
 function s.tg(e,c,rp,sumtype,pos,tp,re)
-	return c:IsLevelBelow(8) and c:IsType(TYPE_EFFECT) and c:IsLocation(LOCATION_HAND)
+	return c:IsLevelBelow(8) and c:IsType(TYPE_EFFECT)
 end
 function s.posop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
