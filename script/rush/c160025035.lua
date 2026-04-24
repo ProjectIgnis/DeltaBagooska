@@ -25,9 +25,9 @@ function s.initial_effect(c)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
 end
-s.listed_names={160218073,160025066}
+s.listed_names={160025033,160025066}
 function s.spcfilter(c)
-	return c:IsCode(160218073,160025066) and not c:IsPublic()
+	return c:IsCode(160025033,160025066) and not c:IsPublic()
 end
 function s.spcon(e,c)
 	if c==nil then return true end
