@@ -85,15 +85,15 @@ function s.ctrltg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_CONTROL,g,1,tp,0)
 end
 function s.ctrlop(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil):GetMaxGroup(Card.GetAttack):Match(Card.IsControlerCanBeChanged,nil)
+	local g=Duel.GetMatchingGroup(Card.IsFaceup,tp,0,LOCATION_MZONE,nil):GetMaxGroup(Card.GetAttack)
 	if not g or #g==0 then return end
-	local sg=g
+	g:Match(Card.IsControlerCanBeChanged,nil)
 	if #g>=2 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CONTROL)
-		sg=g:Select(tp,1,1,nil)
+		g=g:Select(tp,1,1,nil)
 	end
-	if #sg>0 then
-		Duel.HintSelection(sg)
-		Duel.GetControl(sg,tp)
+	if #g>0 then
+		Duel.HintSelection(g)
+		Duel.GetControl(g,tp)
 	end
 end
