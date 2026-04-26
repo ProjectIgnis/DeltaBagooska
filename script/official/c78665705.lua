@@ -71,8 +71,8 @@ function s.setatkdefop(e,tp,eg,ep,ev,re,r,rp)
 	local sc=eg:GetFirst()
 	if sc:IsSummonPlayer(tp) and sc:IsTributeSummoned() and sc:IsCode(CARD_RA) then
 		local mg=sc:GetMaterial()
-		local atk=mg:GetSum(Card.GetBaseAttack)
-		local def=mg:GetSum(Card.GetBaseDefense)
+		local atk=mg:GetSum(Card.GetTextAttack)
+		local def=mg:GetSum(Card.GetTextDefense)
 		--Its original ATK/DEF become the combined original ATK/DEF of the monsters Tributed for its Summon
 		local e1=Effect.CreateEffect(e:GetHandler())
 		e1:SetType(EFFECT_TYPE_SINGLE)
