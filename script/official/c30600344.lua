@@ -1,8 +1,8 @@
---封魔一閃
---Flash of the Forbidden Spell
+--エクシーズ・バースト
+--Xyz Burst
 local s,id=GetID()
 function s.initial_effect(c)
-	--If your opponent controls monsters in all of their Main Monster Zones: Destroy all monsters your opponent controls
+	--If you control a Rank 6 or higher Xyz Monster: Destroy all Set cards your opponent controls
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_DESTROY)
@@ -13,17 +13,16 @@ function s.initial_effect(c)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
 end
-local TOTAL_MMZ_COUNT=Duel.IsDuelType(DUEL_3_COLUMNS_FIELD) and 3 or 5
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.GetMatchingGroupCount(nil,tp,0,LOCATION_MMZONE,nil)==TOTAL_MMZ_COUNT
+	return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsRankAbove,6),tp,LOCATION_MZONE,0,1,nil)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)>0 end
-	local g=Duel.GetFieldGroup(tp,0,LOCATION_MZONE)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsFacedown,tp,0,LOCATION_ONFIELD,1,nil) end
+	local g=Duel.GetMatchingGroup(Card.IsFacedown,tp,0,LOCATION_ONFIELD,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,tp,0)
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
-	local g=Duel.GetFieldGroup(tp,0,LOCATION_MZONE)
+	local g=Duel.GetMatchingGroup(Card.IsFacedown,tp,0,LOCATION_ONFIELD,nil)
 	if #g>0 then
 		Duel.Destroy(g,REASON_EFFECT)
 	end
