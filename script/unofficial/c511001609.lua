@@ -4,12 +4,12 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--Gain LP equal to the total Ranks of all Xyz Monsters you control x 300
 	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCategory(CATEGORY_RECOVER)
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetTarget(s.tg)
-	e1:SetOperation(s.op)
+	e1:SetTarget(s.target)
+	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
@@ -25,7 +25,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if#g==0 then return end
 	local sum=g:GetSum(Card.GetRank)*300
 	Duel.Recover(p,sum,REASON_EFFECT)
-	--This turn if an Xyz Monster(s) you control leaves the field, you can Special Summon 1 Xyz Monster from your Extra Deck, and attach that monster(s) to it as Xyz Material
+	--This turn if an Xyz Monster(s) you control leaves the field, you can Special Summon 1 Xyz Monster from your Extra Deck, and attach that monster(s) to it as its Xyz Material
 	local e1=Effect.CreateEffect(e:GetHandler())
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
