@@ -1,0 +1,36 @@
+--原初の種
+--Primal Seed
+local s,id=GetID()
+function s.initial_effect(c)
+	--Add 2 of your banished cards to your hand
+	local e1=Effect.CreateEffect(c)
+	e1:SetDescription(aux.Stringid(id,0))
+	e1:SetCategory(CATEGORY_TOHAND)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetCode(EVENT_FREE_CHAIN)
+	e1:SetCondition(s.condition)
+	e1:SetTarget(s.target)
+	e1:SetOperation(s.activate)
+	c:RegisterEffect(e1)
+end
+s.listed_names={72989439,82301904}
+function s.cfilter(c)
+	return c:IsFaceup() and c:IsCode(72989439,82301904)
+end
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil)
+end
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_REMOVED) and chkc:IsAbleToHand()end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsAbleToHand,tp,LOCATION_REMOVED,0,2,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectTarget(tp,Card.IsAbleToHand,tp,LOCATION_REMOVED,0,2,2,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,2,0,0)
+end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	local tg=Duel.GetTargetCards(e)
+	if #tg==2 then
+		Duel.SendtoHand(tg,nil,REASON_EFFECT)
+	end
+end
