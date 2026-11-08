@@ -1,0 +1,42 @@
+--模擬戦闘
+--Battle Simulation
+local s,id=GetID()
+function s.initial_effect(c)
+	--Activate
+	local e1=Effect.CreateEffect(c)
+	e1:SetCategory(CATEGORY_ATKCHANGE)
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e1:SetCode(EVENT_FREE_CHAIN)
+	e1:SetHintTiming(TIMING_DAMAGE_CAL)
+	e1:SetCondition(s.condition)
+	e1:SetOperation(s.activate)
+	c:RegisterEffect(e1)
+end
+function s.condition(e,tp,eg,ep,ev,re,r,rp)
+	local a,at=Duel.GetAttacker(),Duel.GetAttackTarget()
+	return at~=nil and a:IsRelateToBattle() and at:IsRelateToBattle() and aux.StatChangeDamageStepCondition()
+end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local a,at=Duel.GetAttacker(),Duel.GetAttackTarget()
+	local aatk,atatk=a:GetAttack()/2,at:GetAttack()/2
+	local e1a=Effect.CreateEffect(c)
+	e1a:SetType(EFFECT_TYPE_SINGLE)
+	e1a:SetCode(EFFECT_SET_ATTACK_FINAL)
+	e1a:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_BATTLE)
+	e1a:SetValue(aatk)
+	a:RegisterEffect(e1a)
+	local e1b=Effect.CreateEffect(c)
+	e1b:SetType(EFFECT_TYPE_SINGLE)
+	e1b:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+	e1b:SetValue(1)
+	e1b:SetReset(RESET_EVENT|RESETS_STANDARD|RESET_PHASE|PHASE_DAMAGE)
+	a:RegisterEffect(e1b)
+	local e2a=e1a:Clone()
+	e2a:SetValue(atatk)
+	at:RegisterEffect(e2a)
+	local e2b=e1b:Clone()
+	e2b:SetValue(1)
+	at:RegisterEffect(e2b)
+end
